@@ -81,8 +81,11 @@ class _NoteDialogState extends State<NoteDialog> {
       content: TextField(
         controller: _text,
         autofocus: true,
+        maxLines: 5,
+        minLines: 3,
         textCapitalization: .sentences,
         decoration: const InputDecoration(
+          labelText: 'Opcional',
           hintText: 'Ex: Piso 2, Setor B, vaga 34',
         ),
         onSubmitted: (_) => _submit(),

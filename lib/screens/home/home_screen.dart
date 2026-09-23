@@ -64,11 +64,8 @@ class _HomeScreenState extends State<HomeScreen> {
         if (photo == null) _showMessage('Foto não salva.');
       }
 
-      String? note;
-      if (coordinates == null) {
-        note = await askForNote(context);
-        if (!mounted) return;
-      }
+      final note = await askForNote(context);
+      if (!mounted) return;
 
       if (coordinates == null && photo == null && note == null) {
         _showMessage('Nada foi salvo: sem GPS, adicione uma foto ou uma nota.');

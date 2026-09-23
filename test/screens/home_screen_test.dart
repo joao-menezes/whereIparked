@@ -59,6 +59,50 @@ void main() {
     expect(find.text('Piso 2, vaga 34'), findsOneWidget);
   });
 
+  testWidgets('with GPS, the note is optional and can be skipped', (
+    tester,
+  ) async {
+    location.nextCoordinates = (latitude: -23.55, longitude: -46.63);
+    await pumpApp(tester);
+
+    Future<void> pumpDialog() async {
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 500));
+    }
+
+    await tester.tap(find.text('Salvar local do carro'));
+    await pumpDialog();
+    await tester.tap(find.text('Agora não'));
+    await pumpDialog();
+    expect(find.text('Adicionar uma nota'), findsOneWidget);
+    await tester.tap(find.text('Pular'));
+    await tester.pumpAndSettle();
+
+    expect(controller.current?.coordinates, isNotNull);
+    expect(controller.current?.note, isNull);
+  });
+
+  testWidgets('with GPS, saves the note when provided', (tester) async {
+    location.nextCoordinates = (latitude: -23.55, longitude: -46.63);
+    await pumpApp(tester);
+
+    Future<void> pumpDialog() async {
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 500));
+    }
+
+    await tester.tap(find.text('Salvar local do carro'));
+    await pumpDialog();
+    await tester.tap(find.text('Agora não'));
+    await pumpDialog();
+    await tester.enterText(find.byType(TextField), 'Setor B');
+    await tester.tap(find.text('Salvar'));
+    await tester.pumpAndSettle();
+
+    expect(controller.current?.note, 'Setor B');
+    expect(find.text('Setor B', skipOffstage: false), findsOneWidget);
+  });
+
   testWidgets('history dialog lists previous spots', (tester) async {
     await controller.save(note: 'Shopping, piso 2');
     await controller.save(note: 'Trabalho');
